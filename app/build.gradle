@@ -1,0 +1,38 @@
+apply plugin: 'com.android.application'
+import com.rain.utils.android.robocop.generator.*;
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "no.connectica.robocop"
+        minSdkVersion 12
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+task contentProviderGen {
+    description = 'Generating a beautiful ContentProvider and required classes'
+    doLast {
+        System.out.println("Generating ContentProvider...")
+        String schemaFilename = '../RoboCoP/schema.json';//replace with the path to your schema
+        String baseOutputDir = 'src/main/java/';
+        //if gradle throws an error on the following line, you probably either don't have your import statement set or you have the wrong path in your buildscript definition
+        ContentProviderGenerator.generateContentProvider(schemaFilename, baseOutputDir);
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+}
