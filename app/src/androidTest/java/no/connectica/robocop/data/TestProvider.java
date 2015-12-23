@@ -12,6 +12,7 @@ import android.util.Log;
 
 import junit.framework.Test;
 
+import no.connectica.robocop.data.database.table.AgendaTable;
 import no.connectica.robocop.data.model.Agenda;
 import no.connectica.robocop.data.provider.AgendaProvider;
 import static no.connectica.robocop.LogUtils.LOGD;
@@ -80,6 +81,17 @@ public class TestProvider extends AndroidTestCase {
 //        LOGD(LOG_TAG, "actual_type:   " + actualType);
         expectedType = AgendaProvider.AgendaItemGroupContent.CONTENT_ITEM_TYPE;
 //        LOGD(LOG_TAG, "expected_type: " + expectedType);
+        assertEquals("TestError: the Agenda CONTENT_URI should return AgendaProvider.AgendaContent.CONTENT_TYPE",
+                expectedType, actualType);
+
+
+        LOGD(LOG_TAG, "    ****    ****");
+        uri = AgendaProvider.AGENDA_ITEM_GROUP_CONTENT_URI;
+        LOGD(LOG_TAG, "agenda_content_uri: " + uri);
+        actualType =  mContext.getContentResolver().getType(uri);
+        LOGD(LOG_TAG, "actual_type:   " + actualType);
+        expectedType = AgendaProvider.AgendaItemGroupContent.CONTENT_TYPE;
+        LOGD(LOG_TAG, "expected_type: " + expectedType);
         assertEquals("TestError: the Agenda CONTENT_URI should return AgendaProvider.AgendaContent.CONTENT_TYPE",
                 expectedType, actualType);
 
@@ -182,6 +194,54 @@ public class TestProvider extends AndroidTestCase {
         );
         assertEquals("TestError: Records not deleted from Agenda table during delete",
                 0, cursor.getCount());
+    }
+
+    public void testUpdateFromProvider() {
+        ContentValues agendaValues = TestUtilities.createAgenda();
+        Uri agendaUri = mContext.getContentResolver()
+                .insert(AgendaProvider.AGENDA_CONTENT_URI, agendaValues);
+
+        LOGD(LOG_TAG, agendaUri.toString());
+        long agendaRowId = ContentUris.parseId(agendaUri);
+
+        assertTrue(agendaRowId != -1);
+        LOGD(LOG_TAG, "new agenda ID: " + agendaRowId);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                AgendaProvider.AGENDA_CONTENT_URI, //.buildUpon().appendPath(agendaRowId+"").build(),
+                null,
+                AgendaTable.TABLE_NAME + "." + AgendaTable._ID + " = ? ",
+                new String[]{agendaRowId + ""},
+                null);
+
+
+//        if (cursor.getCount() > 0 && cursor.moveToFirst())
+//        {
+//            Agenda agenda = new Agenda(cursor);
+//            LOGD(LOG_TAG, agenda.getRowId() + "");
+//            LOGD(LOG_TAG, agenda.getName());
+//            LOGD(LOG_TAG, agenda.getDate());
+//            LOGD(LOG_TAG, agenda.getPersonConducting());
+//        }
+
+        Agenda updatedAgenda = new Agenda();
+        updatedAgenda.setName("NEW name");
+        updatedAgenda.setDate("NEW date");
+        updatedAgenda.setPersonConducting("NEW person");
+        ContentValues updatedValues = updatedAgenda.getContentValues();
+
+        Cursor agendaCursor = mContext.getContentResolver().query(AgendaProvider.AGENDA_CONTENT_URI, null, null, null, null);
+
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        agendaCursor.registerContentObserver(tco);
+
+        int count = mContext.getContentResolver().update(
+                AgendaProvider.AGENDA_CONTENT_URI,
+                updatedValues,
+                AgendaTable.TABLE_NAME + "." + AgendaTable._ID + " = ? ",
+                new String[]{agendaRowId + ""});
+        assertTrue("TestError: More than one Agenda was updated", count == 1);
+
     }
 
 }
