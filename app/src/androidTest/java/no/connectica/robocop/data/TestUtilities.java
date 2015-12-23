@@ -21,9 +21,14 @@ import no.connectica.robocop.utils.PollingCheck;
  */
 public class TestUtilities extends AndroidTestCase{
 
-    static ContentValues createCalendarItem() {
+    static ContentValues createCalendarItem(long agendaRowId) {
         CalendarItem calendar = new CalendarItem();
-//        calendar.setAgendaId();
+        calendar.setAgendaId(agendaRowId);
+        calendar.setDate(new Date().toString());
+        calendar.setLocation("A TEST location");
+        calendar.setNotes("A TEST notes");
+        calendar.setTime( "hh:mm:ss");
+        calendar.setTitle("A TEST title");
         return calendar.getContentValues();
     }
 

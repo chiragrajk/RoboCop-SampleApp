@@ -86,11 +86,12 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void testInsertReadProvider() {
-        ContentValues testAgendaValues = TestUtilities.createAgenda();
+        ContentValues agendaValues = TestUtilities.createAgenda();
 
         TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
         mContext.getContentResolver().registerContentObserver(AgendaProvider.AGENDA_CONTENT_URI, true, tco);
-        Uri agendaUri = mContext.getContentResolver().insert(AgendaProvider.AGENDA_CONTENT_URI, testAgendaValues);
+        Uri agendaUri = mContext.getContentResolver().insert(AgendaProvider.AGENDA_CONTENT_URI, agendaValues);
+        assertTrue(agendaUri != null);
 
         tco.waitForNotificationOrFail();
         mContext.getContentResolver().unregisterContentObserver(tco);
@@ -108,9 +109,34 @@ public class TestProvider extends AndroidTestCase {
         );
 
         TestUtilities.validateCursor("TestError: error validation AgendaEntry",
-                cursor, testAgendaValues);
+                cursor, agendaValues);
 
-        
+        ContentValues calendarValues = TestUtilities.createCalendarItem(agendaRowId);
+        tco = TestUtilities.getTestContentObserver();
+
+        mContext.getContentResolver().registerContentObserver(AgendaProvider.CALENDAR_ITEM_CONTENT_URI, true, tco);
+
+        Uri calendarInsertUri = mContext.getContentResolver()
+                .insert(AgendaProvider.CALENDAR_ITEM_CONTENT_URI, calendarValues);
+        assertTrue(calendarInsertUri != null);
+
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        Cursor calendarCursor = mContext.getContentResolver().query(
+                AgendaProvider.CALENDAR_ITEM_CONTENT_URI,  // Table to Query
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null // columns to group by
+        );
+
+        TestUtilities.validateCursor("TestError: Error validation CalendarEntry",
+                calendarCursor, calendarValues);
+
+
+
+
     }
 
 }
