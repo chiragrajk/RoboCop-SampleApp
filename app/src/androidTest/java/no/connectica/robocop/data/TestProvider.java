@@ -134,9 +134,54 @@ public class TestProvider extends AndroidTestCase {
         TestUtilities.validateCursor("TestError: Error validation CalendarEntry",
                 calendarCursor, calendarValues);
 
+    }
 
+    public void testDeleteRecords() {
+        testInsertReadProvider();
 
+        TestUtilities.TestContentObserver calendarObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(AgendaProvider.CALENDAR_ITEM_CONTENT_URI, true, calendarObserver);
 
+        TestUtilities.TestContentObserver agendaObserver = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(AgendaProvider.AGENDA_CONTENT_URI, true, agendaObserver);
+
+        deleteAllRecordsFromProvider();
+
+        calendarObserver.waitForNotificationOrFail();
+        agendaObserver.waitForNotificationOrFail();
+
+        mContext.getContentResolver().unregisterContentObserver(calendarObserver);
+        mContext.getContentResolver().unregisterContentObserver(agendaObserver);
+
+    }
+
+    public void deleteAllRecordsFromProvider() {
+        mContext.getContentResolver().delete(AgendaProvider.CALENDAR_ITEM_CONTENT_URI,
+                null,
+                null);
+        mContext.getContentResolver().delete(AgendaProvider.AGENDA_CONTENT_URI,
+                null,
+                null);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                AgendaProvider.CALENDAR_ITEM_CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+        assertEquals("TestError: Records not deleted from Calendar table during delete",
+                0, cursor.getCount());
+
+        cursor = mContext.getContentResolver().query(
+                AgendaProvider.AGENDA_CONTENT_URI,  // Table to Query
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null // columns to group by
+        );
+        assertEquals("TestError: Records not deleted from Agenda table during delete",
+                0, cursor.getCount());
     }
 
 }
