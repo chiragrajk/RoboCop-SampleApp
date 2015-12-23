@@ -1,14 +1,18 @@
 package no.connectica.robocop.data;
 
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.database.Cursor;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
 import junit.framework.Test;
 
+import no.connectica.robocop.data.model.Agenda;
 import no.connectica.robocop.data.provider.AgendaProvider;
 import static no.connectica.robocop.LogUtils.LOGD;
 import static no.connectica.robocop.LogUtils.makeLogTag;
@@ -80,4 +84,33 @@ public class TestProvider extends AndroidTestCase {
                 expectedType, actualType);
 
     }
+
+    public void testInsertReadProvider() {
+        ContentValues testAgendaValues = TestUtilities.createAgenda();
+
+        TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
+        mContext.getContentResolver().registerContentObserver(AgendaProvider.AGENDA_CONTENT_URI, true, tco);
+        Uri agendaUri = mContext.getContentResolver().insert(AgendaProvider.AGENDA_CONTENT_URI, testAgendaValues);
+
+        tco.waitForNotificationOrFail();
+        mContext.getContentResolver().unregisterContentObserver(tco);
+
+        long agendaRowId = ContentUris.parseId(agendaUri);
+
+        assertTrue(agendaRowId != -1);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                AgendaProvider.AGENDA_CONTENT_URI,
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null  // sort order
+        );
+
+        TestUtilities.validateCursor("TestError: error validation AgendaEntry",
+                cursor, testAgendaValues);
+
+        
+    }
+
 }
