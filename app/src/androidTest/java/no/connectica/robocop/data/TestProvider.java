@@ -7,15 +7,18 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import no.connectica.robocop.data.database.table.AgendaTable;
+import junit.framework.Test;
+
 import no.connectica.robocop.data.provider.AgendaProvider;
+import static no.connectica.robocop.LogUtils.LOGD;
+import static no.connectica.robocop.LogUtils.makeLogTag;
 
 /**
  * Created by Chirag on 12/22/15.
  */
 public class TestProvider extends AndroidTestCase {
 
-    private static String LOG_TAG = ">> " + TestProvider.class.getSimpleName();
+    private static String LOG_TAG = makeLogTag(TestProvider.class);
 
     @Override
     protected void setUp() throws Exception {
@@ -44,35 +47,35 @@ public class TestProvider extends AndroidTestCase {
         Uri uri;
         String expectedType, actualType;
 
-        Log.d(LOG_TAG, "    ****    ****");
+//        LOGD(LOG_TAG, "    ****    ****");
         uri = AgendaProvider.AGENDA_CONTENT_URI;
-        Log.d(LOG_TAG, "agenda_content_uri: " + uri);
+//        LOGD(LOG_TAG, "agenda_content_uri: " + uri);
         actualType = mContext.getContentResolver().getType(uri);
-        Log.d(LOG_TAG, "actual type:   " + actualType);
+//        LOGD(LOG_TAG, "actual type:   " + actualType);
         expectedType = AgendaProvider.AgendaContent.CONTENT_TYPE;
-        Log.d(LOG_TAG, "expected type: " + expectedType);
+//        LOGD(LOG_TAG, "expected type: " + expectedType);
         assertEquals("TestError: the Agenda CONTENT_URI should return AgendaProvider.AgendaContent.CONTENT_TYPE",
                 expectedType, actualType);
 
 
-        Log.d(LOG_TAG, "    ****    ****");
+//        LOGD(LOG_TAG, "    ****    ****");
         uri = AgendaProvider.AGENDA_ITEM_CONTENT_URI;
-        Log.d(LOG_TAG, "agenda_content_uri: " + uri);
-        actualType = mContext.getContentResolver().getType(AgendaProvider.AGENDA_ITEM_CONTENT_URI);
-        Log.d(LOG_TAG, "actual type:   " + actualType);
+//        LOGD(LOG_TAG, "agenda_content_uri: " + uri);
+        actualType = mContext.getContentResolver().getType(uri);
+//        LOGD(LOG_TAG, "actual type:   " + actualType);
         expectedType = AgendaProvider.AgendaItemContent.CONTENT_TYPE;
-        Log.d(LOG_TAG, "expected type: " + expectedType);
+//        LOGD(LOG_TAG, "expected type: " + expectedType);
         assertEquals("TestError: the Agenda CONTENT_URI should return AgendaProvider.AgendaContent.CONTENT_TYPE",
                 expectedType, actualType);
 
 
-        Log.d(LOG_TAG, "    ****    ****");
+//        LOGD(LOG_TAG, "    ****    ****");
         uri = AgendaProvider.AGENDA_ITEM_GROUP_CONTENT_URI.buildUpon().appendPath("23").build();
-        Log.d(LOG_TAG, "agenda_content_uri: " + uri);
+//        LOGD(LOG_TAG, "agenda_content_uri: " + uri);
         actualType =  mContext.getContentResolver().getType(uri);
-        Log.d(LOG_TAG, "actual_type:   " + actualType);
+//        LOGD(LOG_TAG, "actual_type:   " + actualType);
         expectedType = AgendaProvider.AgendaItemGroupContent.CONTENT_ITEM_TYPE;
-        Log.d(LOG_TAG, "expected_type: " + expectedType);
+//        LOGD(LOG_TAG, "expected_type: " + expectedType);
         assertEquals("TestError: the Agenda CONTENT_URI should return AgendaProvider.AgendaContent.CONTENT_TYPE",
                 expectedType, actualType);
 
