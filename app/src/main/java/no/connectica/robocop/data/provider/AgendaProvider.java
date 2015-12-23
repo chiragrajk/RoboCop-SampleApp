@@ -25,16 +25,22 @@ public class AgendaProvider extends ContentProvider {
 
     public static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
 
-    public static final Uri AGENDA_CONTENT_URI = Uri.withAppendedPath(AgendaProvider.AUTHORITY_URI, AgendaContent.CONTENT_PATH);
+    public static final Uri AGENDA_CONTENT_URI = Uri.withAppendedPath(
+            AgendaProvider.AUTHORITY_URI, AgendaContent.CONTENT_PATH);
 
-    public static final Uri CALENDAR_ITEM_CONTENT_URI = Uri.withAppendedPath(AgendaProvider.AUTHORITY_URI, CalendarItemContent.CONTENT_PATH);
+    public static final Uri CALENDAR_ITEM_CONTENT_URI = Uri.withAppendedPath(
+            AgendaProvider.AUTHORITY_URI, CalendarItemContent.CONTENT_PATH);
 
-    public static final Uri AGENDA_ITEM_GROUP_CONTENT_URI = Uri.withAppendedPath(AgendaProvider.AUTHORITY_URI, AgendaItemGroupContent.CONTENT_PATH);
+    public static final Uri AGENDA_ITEM_GROUP_CONTENT_URI = Uri.withAppendedPath(
+            AgendaProvider.AUTHORITY_URI, AgendaItemGroupContent.CONTENT_PATH);
 
-    public static final Uri AGENDA_ITEM_CONTENT_URI = Uri.withAppendedPath(AgendaProvider.AUTHORITY_URI, AgendaItemContent.CONTENT_PATH);
+    public static final Uri AGENDA_ITEM_CONTENT_URI = Uri.withAppendedPath(
+            AgendaProvider.AUTHORITY_URI, AgendaItemContent.CONTENT_PATH);
 
-    public static final Uri AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI = Uri.withAppendedPath(AgendaProvider.AUTHORITY_URI, AgendaJoinCalendarItemContent.CONTENT_PATH);
-    public static final Uri AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI = Uri.withAppendedPath(AgendaProvider.AUTHORITY_URI, AgendaItemGroupJoinAgendaItemContent.CONTENT_PATH);
+    public static final Uri AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI = Uri.withAppendedPath(
+            AgendaProvider.AUTHORITY_URI, AgendaJoinCalendarItemContent.CONTENT_PATH);
+    public static final Uri AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI = Uri.withAppendedPath(
+            AgendaProvider.AUTHORITY_URI, AgendaItemGroupJoinAgendaItemContent.CONTENT_PATH);
 
     private static final UriMatcher URI_MATCHER;
     private AgendaDatabase mDatabase;
@@ -53,26 +59,26 @@ public class AgendaProvider extends ContentProvider {
 
     private static final int AGENDA_JOIN_CALENDAR_ITEM_DIR = 8;
 
-        private static final int AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_DIR = 9;
+    private static final int AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_DIR = 9;
 
-    
+
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
         URI_MATCHER.addURI(AUTHORITY, AgendaContent.CONTENT_PATH, AGENDA_DIR);
-        URI_MATCHER.addURI(AUTHORITY, AgendaContent.CONTENT_PATH + "/#",    AGENDA_ID);
+        URI_MATCHER.addURI(AUTHORITY, AgendaContent.CONTENT_PATH + "/#", AGENDA_ID);
 
         URI_MATCHER.addURI(AUTHORITY, CalendarItemContent.CONTENT_PATH, CALENDAR_ITEM_DIR);
-        URI_MATCHER.addURI(AUTHORITY, CalendarItemContent.CONTENT_PATH + "/#",    CALENDAR_ITEM_ID);
+        URI_MATCHER.addURI(AUTHORITY, CalendarItemContent.CONTENT_PATH + "/#", CALENDAR_ITEM_ID);
 
         URI_MATCHER.addURI(AUTHORITY, AgendaItemGroupContent.CONTENT_PATH, AGENDA_ITEM_GROUP_DIR);
-        URI_MATCHER.addURI(AUTHORITY, AgendaItemGroupContent.CONTENT_PATH + "/#",    AGENDA_ITEM_GROUP_ID);
+        URI_MATCHER.addURI(AUTHORITY, AgendaItemGroupContent.CONTENT_PATH + "/#", AGENDA_ITEM_GROUP_ID);
 
         URI_MATCHER.addURI(AUTHORITY, AgendaItemContent.CONTENT_PATH, AGENDA_ITEM_DIR);
-        URI_MATCHER.addURI(AUTHORITY, AgendaItemContent.CONTENT_PATH + "/#",    AGENDA_ITEM_ID);
+        URI_MATCHER.addURI(AUTHORITY, AgendaItemContent.CONTENT_PATH + "/#", AGENDA_ITEM_ID);
 
         URI_MATCHER.addURI(AUTHORITY, AgendaJoinCalendarItemContent.CONTENT_PATH, AGENDA_JOIN_CALENDAR_ITEM_DIR);
         URI_MATCHER.addURI(AUTHORITY, AgendaItemGroupJoinAgendaItemContent.CONTENT_PATH, AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_DIR);
-     }
+    }
 
     public static final class AgendaContent implements BaseColumns {
         public static final String CONTENT_PATH = "agenda";
@@ -102,6 +108,7 @@ public class AgendaProvider extends ContentProvider {
         public static final String CONTENT_PATH = "agenda_join_calendar_item";
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.agenda_database.agenda_join_calendar_item";
     }
+
     public static final class AgendaItemGroupJoinAgendaItemContent implements BaseColumns {
         public static final String CONTENT_PATH = "agenda_item_group_join_agenda_item";
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.agenda_database.agenda_item_group_join_agenda_item";
@@ -180,34 +187,34 @@ public class AgendaProvider extends ContentProvider {
             case AGENDA_JOIN_CALENDAR_ITEM_DIR:
                 queryBuilder.setTables(AgendaTable.TABLE_NAME + " JOIN " + CalendarItemTable.TABLE_NAME + " ON (" + AgendaTable.TABLE_NAME + "." + AgendaTable._ID + "=" + CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.AGENDA_ID + ")");
 
-                projection = new String[] {
-                    //add left table columns
-                    AgendaTable.TABLE_NAME + "._id AS " + AgendaTable.TABLE_NAME + "__id",
-                    AgendaTable.TABLE_NAME + "." + AgendaTable.NAME + " AS " + AgendaTable.TABLE_NAME + "_" + AgendaTable.NAME,
-                    AgendaTable.TABLE_NAME + "." + AgendaTable.DATE + " AS " + AgendaTable.TABLE_NAME + "_" + AgendaTable.DATE,
-                    AgendaTable.TABLE_NAME + "." + AgendaTable.PERSON_CONDUCTING + " AS " + AgendaTable.TABLE_NAME + "_" + AgendaTable.PERSON_CONDUCTING,
-                    CalendarItemTable.TABLE_NAME + "._id AS " + CalendarItemTable.TABLE_NAME + "__id",
-                    CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.TITLE + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.TITLE,
-                    CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.DATE + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.DATE,
-                    CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.TIME + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.TIME,
-                    CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.LOCATION + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.LOCATION,
-                    CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.NOTES + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.NOTES,
+                projection = new String[]{
+                        //add left table columns
+                        AgendaTable.TABLE_NAME + "._id AS " + AgendaTable.TABLE_NAME + "__id",
+                        AgendaTable.TABLE_NAME + "." + AgendaTable.NAME + " AS " + AgendaTable.TABLE_NAME + "_" + AgendaTable.NAME,
+                        AgendaTable.TABLE_NAME + "." + AgendaTable.DATE + " AS " + AgendaTable.TABLE_NAME + "_" + AgendaTable.DATE,
+                        AgendaTable.TABLE_NAME + "." + AgendaTable.PERSON_CONDUCTING + " AS " + AgendaTable.TABLE_NAME + "_" + AgendaTable.PERSON_CONDUCTING,
+                        CalendarItemTable.TABLE_NAME + "._id AS " + CalendarItemTable.TABLE_NAME + "__id",
+                        CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.TITLE + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.TITLE,
+                        CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.DATE + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.DATE,
+                        CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.TIME + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.TIME,
+                        CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.LOCATION + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.LOCATION,
+                        CalendarItemTable.TABLE_NAME + "." + CalendarItemTable.NOTES + " AS " + CalendarItemTable.TABLE_NAME + "_" + CalendarItemTable.NOTES,
                 };
                 break;
             case AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_DIR:
                 queryBuilder.setTables(AgendaItemGroupTable.TABLE_NAME + " JOIN " + AgendaItemTable.TABLE_NAME + " ON (" + AgendaItemGroupTable.TABLE_NAME + "." + AgendaItemGroupTable._ID + "=" + AgendaItemTable.TABLE_NAME + "." + AgendaItemTable.AGENDA_ITEM_GROUP_ID + ")");
 
-                projection = new String[] {
-                    //add left table columns
-                    AgendaItemGroupTable.TABLE_NAME + "._id AS " + AgendaItemGroupTable.TABLE_NAME + "__id",
-                    AgendaItemGroupTable.TABLE_NAME + "." + AgendaItemGroupTable.TITLE + " AS " + AgendaItemGroupTable.TABLE_NAME + "_" + AgendaItemGroupTable.TITLE,
-                    AgendaItemGroupTable.TABLE_NAME + "." + AgendaItemGroupTable.DESCRIPTION + " AS " + AgendaItemGroupTable.TABLE_NAME + "_" + AgendaItemGroupTable.DESCRIPTION,
-                    AgendaItemTable.TABLE_NAME + "._id AS " + AgendaItemTable.TABLE_NAME + "__id",
-                    AgendaItemTable.TABLE_NAME + "." + AgendaItemTable.TITLE + " AS " + AgendaItemTable.TABLE_NAME + "_" + AgendaItemTable.TITLE,
-                    AgendaItemTable.TABLE_NAME + "." + AgendaItemTable.COMMENT + " AS " + AgendaItemTable.TABLE_NAME + "_" + AgendaItemTable.COMMENT,
+                projection = new String[]{
+                        //add left table columns
+                        AgendaItemGroupTable.TABLE_NAME + "._id AS " + AgendaItemGroupTable.TABLE_NAME + "__id",
+                        AgendaItemGroupTable.TABLE_NAME + "." + AgendaItemGroupTable.TITLE + " AS " + AgendaItemGroupTable.TABLE_NAME + "_" + AgendaItemGroupTable.TITLE,
+                        AgendaItemGroupTable.TABLE_NAME + "." + AgendaItemGroupTable.DESCRIPTION + " AS " + AgendaItemGroupTable.TABLE_NAME + "_" + AgendaItemGroupTable.DESCRIPTION,
+                        AgendaItemTable.TABLE_NAME + "._id AS " + AgendaItemTable.TABLE_NAME + "__id",
+                        AgendaItemTable.TABLE_NAME + "." + AgendaItemTable.TITLE + " AS " + AgendaItemTable.TABLE_NAME + "_" + AgendaItemTable.TITLE,
+                        AgendaItemTable.TABLE_NAME + "." + AgendaItemTable.COMMENT + " AS " + AgendaItemTable.TABLE_NAME + "_" + AgendaItemTable.COMMENT,
                 };
                 break;
-            default :
+            default:
                 throw new IllegalArgumentException("Unsupported URI:" + uri);
         }
 
@@ -262,7 +269,7 @@ public class AgendaProvider extends ContentProvider {
 
                     dbConnection.setTransactionSuccessful();
                     return newAgendaItemUri;
-                default :
+                default:
                     throw new IllegalArgumentException("Unsupported URI:" + uri);
             }
         } catch (Exception e) {
@@ -292,14 +299,14 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case AGENDA_ID:
-                   final long agendaId = ContentUris.parseId(uri);
-                   updateCount = dbConnection.update(AgendaTable.TABLE_NAME, values,
-                       AgendaTable._ID + "=" + agendaId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
+                    final long agendaId = ContentUris.parseId(uri);
+                    updateCount = dbConnection.update(AgendaTable.TABLE_NAME, values,
+                            AgendaTable._ID + "=" + agendaId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
 
-                   joinUris.add(AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI);
+                    joinUris.add(AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI);
 
-                   dbConnection.setTransactionSuccessful();
-                   break;
+                    dbConnection.setTransactionSuccessful();
+                    break;
 
                 case CALENDAR_ITEM_DIR:
                     updateCount = dbConnection.update(CalendarItemTable.TABLE_NAME, values, selection, selectionArgs);
@@ -309,14 +316,14 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case CALENDAR_ITEM_ID:
-                   final long calendar_itemId = ContentUris.parseId(uri);
-                   updateCount = dbConnection.update(CalendarItemTable.TABLE_NAME, values,
-                       CalendarItemTable._ID + "=" + calendar_itemId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
+                    final long calendar_itemId = ContentUris.parseId(uri);
+                    updateCount = dbConnection.update(CalendarItemTable.TABLE_NAME, values,
+                            CalendarItemTable._ID + "=" + calendar_itemId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
 
-                   joinUris.add(AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI);
+                    joinUris.add(AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI);
 
-                   dbConnection.setTransactionSuccessful();
-                   break;
+                    dbConnection.setTransactionSuccessful();
+                    break;
 
                 case AGENDA_ITEM_GROUP_DIR:
                     updateCount = dbConnection.update(AgendaItemGroupTable.TABLE_NAME, values, selection, selectionArgs);
@@ -326,14 +333,14 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case AGENDA_ITEM_GROUP_ID:
-                   final long agenda_item_groupId = ContentUris.parseId(uri);
-                   updateCount = dbConnection.update(AgendaItemGroupTable.TABLE_NAME, values,
-                       AgendaItemGroupTable._ID + "=" + agenda_item_groupId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
+                    final long agenda_item_groupId = ContentUris.parseId(uri);
+                    updateCount = dbConnection.update(AgendaItemGroupTable.TABLE_NAME, values,
+                            AgendaItemGroupTable._ID + "=" + agenda_item_groupId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
 
-                   joinUris.add(AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI);
+                    joinUris.add(AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI);
 
-                   dbConnection.setTransactionSuccessful();
-                   break;
+                    dbConnection.setTransactionSuccessful();
+                    break;
 
                 case AGENDA_ITEM_DIR:
                     updateCount = dbConnection.update(AgendaItemTable.TABLE_NAME, values, selection, selectionArgs);
@@ -343,16 +350,16 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case AGENDA_ITEM_ID:
-                   final long agenda_itemId = ContentUris.parseId(uri);
-                   updateCount = dbConnection.update(AgendaItemTable.TABLE_NAME, values,
-                       AgendaItemTable._ID + "=" + agenda_itemId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
+                    final long agenda_itemId = ContentUris.parseId(uri);
+                    updateCount = dbConnection.update(AgendaItemTable.TABLE_NAME, values,
+                            AgendaItemTable._ID + "=" + agenda_itemId + (TextUtils.isEmpty(selection) ? "" : " AND (" + selection + ")"), selectionArgs);
 
-                   joinUris.add(AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI);
+                    joinUris.add(AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI);
 
-                   dbConnection.setTransactionSuccessful();
-                   break;
+                    dbConnection.setTransactionSuccessful();
+                    break;
 
-                default :
+                default:
                     throw new IllegalArgumentException("Unsupported URI:" + uri);
             }
         } finally {
@@ -389,7 +396,7 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case AGENDA_ID:
-                    deleteCount = dbConnection.delete(AgendaTable.TABLE_NAME, AgendaTable.WHERE_ID_EQUALS, new String[] { uri.getLastPathSegment() });
+                    deleteCount = dbConnection.delete(AgendaTable.TABLE_NAME, AgendaTable.WHERE_ID_EQUALS, new String[]{uri.getLastPathSegment()});
 
                     joinUris.add(AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI);
 
@@ -404,7 +411,7 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case CALENDAR_ITEM_ID:
-                    deleteCount = dbConnection.delete(CalendarItemTable.TABLE_NAME, CalendarItemTable.WHERE_ID_EQUALS, new String[] { uri.getLastPathSegment() });
+                    deleteCount = dbConnection.delete(CalendarItemTable.TABLE_NAME, CalendarItemTable.WHERE_ID_EQUALS, new String[]{uri.getLastPathSegment()});
 
                     joinUris.add(AGENDA_JOIN_CALENDAR_ITEM_CONTENT_URI);
 
@@ -419,7 +426,7 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case AGENDA_ITEM_GROUP_ID:
-                    deleteCount = dbConnection.delete(AgendaItemGroupTable.TABLE_NAME, AgendaItemGroupTable.WHERE_ID_EQUALS, new String[] { uri.getLastPathSegment() });
+                    deleteCount = dbConnection.delete(AgendaItemGroupTable.TABLE_NAME, AgendaItemGroupTable.WHERE_ID_EQUALS, new String[]{uri.getLastPathSegment()});
 
                     joinUris.add(AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI);
 
@@ -434,14 +441,14 @@ public class AgendaProvider extends ContentProvider {
                     dbConnection.setTransactionSuccessful();
                     break;
                 case AGENDA_ITEM_ID:
-                    deleteCount = dbConnection.delete(AgendaItemTable.TABLE_NAME, AgendaItemTable.WHERE_ID_EQUALS, new String[] { uri.getLastPathSegment() });
+                    deleteCount = dbConnection.delete(AgendaItemTable.TABLE_NAME, AgendaItemTable.WHERE_ID_EQUALS, new String[]{uri.getLastPathSegment()});
 
                     joinUris.add(AGENDA_ITEM_GROUP_JOIN_AGENDA_ITEM_CONTENT_URI);
 
                     dbConnection.setTransactionSuccessful();
                     break;
 
-                default :
+                default:
                     throw new IllegalArgumentException("Unsupported URI:" + uri);
             }
         } finally {
