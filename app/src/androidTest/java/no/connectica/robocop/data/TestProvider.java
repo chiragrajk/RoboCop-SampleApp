@@ -242,6 +242,21 @@ public class TestProvider extends AndroidTestCase {
                 new String[]{agendaRowId + ""});
         assertTrue("TestError: More than one Agenda was updated", count == 1);
 
+        tco.waitForNotificationOrFail();
+
+        agendaCursor.unregisterContentObserver(tco);
+        agendaCursor.close();
+
+        Cursor cursor1 = mContext.getContentResolver().query(
+                AgendaProvider.AGENDA_CONTENT_URI,
+                null,
+                AgendaTable.WHERE_ID_EQUALS,
+                new String[]{agendaRowId+""},
+                null
+        );
+
+        TestUtilities.validateCursor("TestError: test updated agenda.", cursor1, updatedValues);
+        cursor.close();
     }
 
 }
